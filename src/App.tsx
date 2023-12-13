@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
 import "./App.css";
