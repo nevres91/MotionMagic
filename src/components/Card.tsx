@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import { imgBaseUrl } from "../Api";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 type details = {
   id: string;
   original_language: string;
   poster_path: string;
   title: string;
+  original_name: string;
   overview: string;
   release_date: string;
+  first_air_date: string;
   runtime: number;
   spoken_languages: {
     english_name: string;
@@ -23,19 +27,26 @@ const Card: React.FC<details> = ({
   poster_path,
   id,
   original_language,
+  original_name,
   overview,
   release_date,
+  first_air_date,
   title,
   runtime,
   spoken_languages,
   omdbData,
 }) => {
+  const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
   const { english_name } = spoken_languages[0];
   const { imdbRating } = omdbData;
   // *Extracting year from release date
   function trimDate(date: string) {
-    const trimmed = date.substring(0, 4);
-    return trimmed;
+    if (date) {
+      const trimmed = date.substring(0, 4);
+      return trimmed;
+    } else {
+      return "Loading...";
+    }
   }
 
   // *tooltip and overview on movie title
@@ -76,14 +87,14 @@ const Card: React.FC<details> = ({
           onMouseLeave={handleMouseLeave}
           className="movie-title"
         >
-          {title}
+          {tvShow ? original_name : title}
         </h3>
         <span className={`tooltip ${tooltipVisible ? "visible" : ""} `}>
           {title}
         </span>
         <p>{english_name}</p>
         <div className="release-date">
-          <span>{trimDate(release_date)}</span>
+          <span>{trimDate(tvShow ? first_air_date : release_date)}</span>
           <span>{runtime}min</span>
         </div>
       </div>

@@ -6,6 +6,7 @@ const Landing: React.FC = () => {
   const endpoint = useSelector(
     (state: RootState) => state.endpoints.currentEndpoint
   );
+  const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
   return (
     <div className="landing-body">
       <div className="landing-overlay"></div>
@@ -17,12 +18,14 @@ const Landing: React.FC = () => {
       </div>
       <MoviesList
         endpoint={endpoint}
-        tvShow={true}
+        tvShow={tvShow}
         h2={
           endpoint === "movie/popular"
             ? "Popular Movies:"
             : endpoint === "movie/top_rated"
             ? "Top Rated Movies:"
+            : endpoint === "tv/popular"
+            ? "Popular TV-Shows:"
             : "Trending Movies:"
         }
         showButtons={false}

@@ -8,8 +8,10 @@ type details = {
   original_language: string;
   poster_path: string;
   title: string;
+  original_name: string;
   overview: string;
   release_date: string;
+  first_air_date: string;
   runtime: number;
   spoken_languages: {
     english_name: string;
@@ -44,7 +46,9 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
         const { results, total_pages } = res.data;
         setTotalPages(total_pages);
         const secondaryRequests = results.map(async (result: any) => {
-          const secondaryRes = await request(`/movie/${result.id}`);
+          const secondaryRes = await request(
+            `/${tvShow ? "tv" : "movie"}/${result.id}`
+          );
           const imdb_id = secondaryRes.data.imdb_id;
           const omdbRes = await axios.get(`https://www.omdbapi.com/`, {
             params: {
@@ -64,7 +68,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
       }
     };
     fetchItems();
-  }, [endpoint]);
+  }, [endpoint, tvShow]);
 
   return (
     <div className="trending-container">
@@ -93,6 +97,8 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
                   runtime={item.runtime}
                   spoken_languages={item.spoken_languages}
                   omdbData={item.omdbData}
+                  first_air_date={item.first_air_date}
+                  original_name={item.original_name}
                 />
               );
             })
