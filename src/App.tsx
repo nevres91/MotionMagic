@@ -1,10 +1,12 @@
+import React from "react";
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Landing from "./components/Landing";
+import { RootState } from "./store";
 
-function App() {
+const App: React.FC = () => {
   return (
     <>
       <Navbar />
@@ -14,6 +16,6 @@ function App() {
       </Routes>
     </>
   );
-}
+};
 
 export default App;

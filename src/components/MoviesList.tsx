@@ -64,29 +64,39 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
       }
     };
     fetchItems();
-  }, []);
+  }, [endpoint]);
 
   return (
     <div className="trending-container">
       <div className="trending-content">
         <h2>{h2}</h2>
         <div className="cards-container">
-          {showItems.map((item) => {
-            return (
-              <Card
-                key={item.id}
-                id={item.id}
-                poster_path={item.poster_path}
-                original_language={item.original_language}
-                overview={item.overview}
-                title={item.title}
-                release_date={item.release_date}
-                runtime={item.runtime}
-                spoken_languages={item.spoken_languages}
-                omdbData={item.omdbData}
-              />
-            );
-          })}
+          {showItems.length < 1 ? (
+            <div className="loader">
+              <div className="loader__circle"></div>
+              <div className="loader__circle"></div>
+              <div className="loader__circle"></div>
+              <div className="loader__circle"></div>
+              <div className="loader__circle"></div>
+            </div>
+          ) : (
+            showItems.map((item) => {
+              return (
+                <Card
+                  key={item.id}
+                  id={item.id}
+                  poster_path={item.poster_path}
+                  original_language={item.original_language}
+                  overview={item.overview}
+                  title={item.title}
+                  release_date={item.release_date}
+                  runtime={item.runtime}
+                  spoken_languages={item.spoken_languages}
+                  omdbData={item.omdbData}
+                />
+              );
+            })
+          )}
         </div>
       </div>
     </div>

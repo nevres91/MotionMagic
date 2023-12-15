@@ -1,7 +1,11 @@
-import { popularMovies, topRatedMovies } from "../Api";
+import { RootState } from "../store";
 import MoviesList from "./MoviesList";
+import { useSelector } from "react-redux";
 
-const Landing = () => {
+const Landing: React.FC = () => {
+  const endpoint = useSelector(
+    (state: RootState) => state.endpoints.currentEndpoint
+  );
   return (
     <div className="landing-body">
       <div className="landing-overlay"></div>
@@ -12,17 +16,15 @@ const Landing = () => {
         </button>
       </div>
       <MoviesList
-        endpoint={popularMovies}
+        endpoint={endpoint}
         tvShow={true}
-        h2="Popular Movies:"
-        showButtons={false}
-      />
-      <br />
-      <br />
-      <MoviesList
-        endpoint={topRatedMovies}
-        tvShow={true}
-        h2="Top Rated Movies:"
+        h2={
+          endpoint === "movie/popular"
+            ? "Popular Movies:"
+            : endpoint === "movie/top_rated"
+            ? "Top Rated Movies:"
+            : "Trending Movies:"
+        }
         showButtons={false}
       />
     </div>
