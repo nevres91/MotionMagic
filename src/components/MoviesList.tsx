@@ -13,6 +13,8 @@ type details = {
   release_date: string;
   first_air_date: string;
   runtime: number;
+  number_of_episodes: number;
+  number_of_seasons: number;
   spoken_languages: {
     english_name: string;
     iso_639_1?: string;
@@ -43,13 +45,21 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             page: currentPage,
           },
         });
-        const { results, total_pages } = res.data;
-        setTotalPages(total_pages);
+        const { results } = res.data;
+        setTotalPages(500);
         const secondaryRequests = results.map(async (result: any) => {
           const secondaryRes = await request(
-            `/${tvShow ? "tv" : "movie"}/${result.id}`
+            `${tvShow ? `tv/${result.id}` : `movie/${result.id}`}`,
+            {
+              params: {
+                append_to_response: tvShow ? "external_ids" : "",
+              },
+            }
+            // `/${tvShow ? "tv" : "movie"}/${result.id}`
           );
-          const imdb_id = secondaryRes.data.imdb_id;
+          const imdb_id = !tvShow
+            ? secondaryRes.data.imdb_id
+            : secondaryRes.data.external_ids.imdb_id;
           const omdbRes = await axios.get(`https://www.omdbapi.com/`, {
             params: {
               apikey: process.env.REACT_APP_OMDB_API_KEY,
@@ -68,12 +78,173 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
       }
     };
     fetchItems();
-  }, [endpoint, tvShow]);
+  }, [endpoint, tvShow, currentPage]);
+
+  // Next Page Buttons
+  const nextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
+  // Previous Page Buttons
+  const previousPage = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  // Page Button
+  const pageButton = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="trending-container">
       <div className="trending-content">
         <h2>{h2}</h2>
+        {/* pagination buttons */}
+        {currentPage === 1 ? (
+          <div className="page-btns">
+            {currentPage > 3 ? (
+              <button
+                onClick={() => pageButton(currentPage - 3)}
+                className="page-btn"
+              >
+                {currentPage - 3}
+              </button>
+            ) : (
+              ""
+            )}
+            {currentPage > 2 ? (
+              <button
+                onClick={() => pageButton(currentPage - 2)}
+                className="page-btn"
+              >
+                {currentPage - 2}
+              </button>
+            ) : (
+              ""
+            )}
+            {currentPage >= 2 ? (
+              <button
+                onClick={() => pageButton(currentPage - 1)}
+                className="page-btn"
+              >
+                {currentPage - 1}
+              </button>
+            ) : (
+              ""
+            )}
+            <button className="current-pg">{currentPage}</button>
+            <button
+              onClick={() => pageButton(currentPage + 1)}
+              className="page-btn"
+            >
+              {currentPage + 1}
+            </button>
+            <button
+              onClick={() => pageButton(currentPage + 2)}
+              className="page-btn"
+            >
+              {currentPage + 2}
+            </button>
+            <button
+              onClick={() => pageButton(currentPage + 3)}
+              className="page-btn"
+            >
+              {currentPage + 3}
+            </button>
+            <button className="next-btn" onClick={nextPage}>
+              <span className="material-symbols-outlined">
+                arrow_forward_ios
+              </span>
+            </button>
+          </div>
+        ) : (
+          <div className="page-btns">
+            <button className="first-last" onClick={() => pageButton(1)}>
+              <span className="material-symbols-outlined">first_page</span>
+            </button>
+            <button className="prev-btn" onClick={previousPage}>
+              <span className="material-symbols-outlined">arrow_back_ios</span>
+            </button>
+            {currentPage > 3 ? (
+              <button
+                onClick={() => pageButton(currentPage - 3)}
+                className="page-btn"
+              >
+                {currentPage - 3}
+              </button>
+            ) : (
+              ""
+            )}
+            {currentPage > 2 ? (
+              <button
+                onClick={() => pageButton(currentPage - 2)}
+                className="page-btn"
+              >
+                {currentPage - 2}
+              </button>
+            ) : (
+              ""
+            )}
+            {currentPage >= 2 ? (
+              <button
+                onClick={() => pageButton(currentPage - 1)}
+                className="page-btn"
+              >
+                {currentPage - 1}
+              </button>
+            ) : (
+              ""
+            )}
+            <button className="current-pg">{currentPage}</button>
+            {currentPage >= 500 ? (
+              ""
+            ) : (
+              <button
+                onClick={() => pageButton(currentPage + 1)}
+                className="page-btn"
+              >
+                {currentPage + 1}
+              </button>
+            )}
+
+            {currentPage >= 499 ? (
+              ""
+            ) : (
+              <button
+                onClick={() => pageButton(currentPage + 2)}
+                className="page-btn"
+              >
+                {currentPage + 2}
+              </button>
+            )}
+
+            {currentPage >= 498 ? (
+              ""
+            ) : (
+              <button
+                onClick={() => pageButton(currentPage + 3)}
+                className="page-btn"
+              >
+                {currentPage + 3}
+              </button>
+            )}
+            {currentPage >= 500 ? (
+              ""
+            ) : (
+              <button className="next-btn" onClick={nextPage}>
+                <span className="material-symbols-outlined">
+                  arrow_forward_ios
+                </span>
+              </button>
+            )}
+            <button
+              className="first-last"
+              onClick={() => pageButton(total_pages)}
+            >
+              <span className="material-symbols-outlined">last_page</span>
+            </button>
+          </div>
+        )}
+        {/* ------------------------ */}
         <div className="cards-container">
           {showItems.length < 1 ? (
             <div className="loader">
@@ -99,11 +270,160 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
                   omdbData={item.omdbData}
                   first_air_date={item.first_air_date}
                   original_name={item.original_name}
+                  number_of_episodes={item.number_of_episodes}
+                  number_of_seasons={item.number_of_seasons}
                 />
               );
             })
           )}
         </div>
+        {/* pagination buttons bottom */}
+        {currentPage === 1 ? (
+          <div className="page-btns">
+            {currentPage > 3 ? (
+              <button
+                onClick={() => pageButton(currentPage - 3)}
+                className="page-btn"
+              >
+                {currentPage - 3}
+              </button>
+            ) : (
+              ""
+            )}
+            {currentPage > 2 ? (
+              <button
+                onClick={() => pageButton(currentPage - 2)}
+                className="page-btn"
+              >
+                {currentPage - 2}
+              </button>
+            ) : (
+              ""
+            )}
+            {currentPage >= 2 ? (
+              <button
+                onClick={() => pageButton(currentPage - 1)}
+                className="page-btn"
+              >
+                {currentPage - 1}
+              </button>
+            ) : (
+              ""
+            )}
+            <button className="current-pg">{currentPage}</button>
+            <button
+              onClick={() => pageButton(currentPage + 1)}
+              className="page-btn"
+            >
+              {currentPage + 1}
+            </button>
+            <button
+              onClick={() => pageButton(currentPage + 2)}
+              className="page-btn"
+            >
+              {currentPage + 2}
+            </button>
+            <button
+              onClick={() => pageButton(currentPage + 3)}
+              className="page-btn"
+            >
+              {currentPage + 3}
+            </button>
+            <button className="next-btn" onClick={nextPage}>
+              <span className="material-symbols-outlined">
+                arrow_forward_ios
+              </span>
+            </button>
+          </div>
+        ) : (
+          <div className="page-btns">
+            <button className="first-last" onClick={() => pageButton(1)}>
+              <span className="material-symbols-outlined">first_page</span>
+            </button>
+            <button className="prev-btn" onClick={previousPage}>
+              <span className="material-symbols-outlined">arrow_back_ios</span>
+            </button>
+            {currentPage > 3 ? (
+              <button
+                onClick={() => pageButton(currentPage - 3)}
+                className="page-btn"
+              >
+                {currentPage - 3}
+              </button>
+            ) : (
+              ""
+            )}
+            {currentPage > 2 ? (
+              <button
+                onClick={() => pageButton(currentPage - 2)}
+                className="page-btn"
+              >
+                {currentPage - 2}
+              </button>
+            ) : (
+              ""
+            )}
+            {currentPage >= 2 ? (
+              <button
+                onClick={() => pageButton(currentPage - 1)}
+                className="page-btn"
+              >
+                {currentPage - 1}
+              </button>
+            ) : (
+              ""
+            )}
+            <button className="current-pg">{currentPage}</button>
+            {currentPage >= 500 ? (
+              ""
+            ) : (
+              <button
+                onClick={() => pageButton(currentPage + 1)}
+                className="page-btn"
+              >
+                {currentPage + 1}
+              </button>
+            )}
+
+            {currentPage >= 499 ? (
+              ""
+            ) : (
+              <button
+                onClick={() => pageButton(currentPage + 2)}
+                className="page-btn"
+              >
+                {currentPage + 2}
+              </button>
+            )}
+
+            {currentPage >= 498 ? (
+              ""
+            ) : (
+              <button
+                onClick={() => pageButton(currentPage + 3)}
+                className="page-btn"
+              >
+                {currentPage + 3}
+              </button>
+            )}
+            {currentPage >= 500 ? (
+              ""
+            ) : (
+              <button className="next-btn" onClick={nextPage}>
+                <span className="material-symbols-outlined">
+                  arrow_forward_ios
+                </span>
+              </button>
+            )}
+            <button
+              className="first-last"
+              onClick={() => pageButton(total_pages)}
+            >
+              <span className="material-symbols-outlined">last_page</span>
+            </button>
+          </div>
+        )}
+        {/* --------------------- */}
       </div>
     </div>
   );

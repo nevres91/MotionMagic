@@ -13,6 +13,8 @@ type details = {
   release_date: string;
   first_air_date: string;
   runtime: number;
+  number_of_episodes: number;
+  number_of_seasons: number;
   spoken_languages: {
     english_name: string;
     iso_639_1?: string;
@@ -33,11 +35,13 @@ const Card: React.FC<details> = ({
   first_air_date,
   title,
   runtime,
+  number_of_episodes,
+  number_of_seasons,
   spoken_languages,
   omdbData,
 }) => {
   const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
-  const { english_name } = spoken_languages[0];
+  const language = spoken_languages[0];
   const { imdbRating } = omdbData;
   // *Extracting year from release date
   function trimDate(date: string) {
@@ -92,10 +96,14 @@ const Card: React.FC<details> = ({
         <span className={`tooltip ${tooltipVisible ? "visible" : ""} `}>
           {title}
         </span>
-        <p>{english_name}</p>
+        <p>{language ? language.english_name : "Unknown"}</p>
         <div className="release-date">
           <span>{trimDate(tvShow ? first_air_date : release_date)}</span>
-          <span>{runtime}min</span>
+          <span>
+            {!tvShow
+              ? runtime + " min"
+              : `S${number_of_seasons} E${number_of_episodes}`}
+          </span>
         </div>
       </div>
     </div>
