@@ -5,6 +5,7 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Landing from "./components/Landing";
 import { RootState } from "./store";
+import MovieDetails from "./components/MovieDetails";
 
 const App: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/landing" element={<Landing />} />
+        <Route path="/details" element={<MovieDetails />} />
       </Routes>
     </>
   );

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { imgBaseUrl } from "../Api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
+import { singleImage } from "../slices/movieImages";
+import { moviesDetails, setId } from "../slices/endpoints";
+import { useNavigate } from "react-router-dom";
 
 type details = {
   id: string;
@@ -15,6 +18,16 @@ type details = {
   runtime: number;
   number_of_episodes: number;
   number_of_seasons: number;
+  production_companies: [];
+  genres: [];
+  show_name: string;
+  backdrop_path: string;
+  trailerVideos: {
+    results: {}[];
+  };
+  videos: {
+    results: {}[];
+  };
   spoken_languages: {
     english_name: string;
     iso_639_1?: string;
@@ -22,6 +35,10 @@ type details = {
   }[];
   omdbData: {
     imdbRating: string;
+    Country: string;
+    Director: string;
+    Actors: string[];
+    Genre: string[];
   };
 };
 
@@ -39,7 +56,15 @@ const Card: React.FC<details> = ({
   number_of_seasons,
   spoken_languages,
   omdbData,
+  production_companies,
+  backdrop_path,
+  genres,
+  show_name,
+  trailerVideos,
+  videos,
 }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
   const language = spoken_languages[0];
   const { imdbRating } = omdbData;
@@ -66,15 +91,71 @@ const Card: React.FC<details> = ({
     setTooltipVisible(false);
     setOverlayVisible(false);
   };
+  const cardClick = () => {
+    dispatch(singleImage(poster_path));
+    dispatch(setId(id));
+    window.scrollTo(0, 0);
+    localStorage.setItem("MovieID", id);
+    navigate("/details");
+    dispatch(
+      moviesDetails({
+        title: title,
+        overview: overview,
+        imdb: omdbData.imdbRating,
+        duration: runtime,
+        released: release_date,
+        first_air_date: first_air_date,
+        production: production_companies,
+        country: omdbData.Country,
+        director: omdbData.Director,
+        casts: omdbData.Actors,
+        backdrop_path: backdrop_path,
+        poster_path: poster_path,
+        genres: genres,
+        show_name: original_name,
+        number_of_episodes: number_of_episodes,
+        number_of_seasons: number_of_seasons,
+        Tvideos: trailerVideos,
+        videos: videos,
+      }),
+      localStorage.setItem(
+        "DETAILS",
+        JSON.stringify({
+          title: title,
+          overview: overview,
+          imdb: omdbData.imdbRating,
+          duration: runtime,
+          released: release_date,
+          first_air_date: first_air_date,
+          production: production_companies,
+          country: omdbData.Country,
+          director: omdbData.Director,
+          casts: omdbData.Actors,
+          backdrop_path: backdrop_path,
+          poster_path: poster_path,
+          genres: genres,
+          show_name: original_name,
+          number_of_episodes: number_of_episodes,
+          number_of_seasons: number_of_seasons,
+          Tvideos: trailerVideos,
+          videos: videos,
+        })
+      )
+    );
+  };
 
   return (
-    <div className="card">
+    <div onClick={cardClick} className="card">
       <div className="card-overlay"></div>
       <div
         className="card-image"
-        style={{
-          background: `url('${imgBaseUrl}${poster_path}')no-repeat center center/cover`,
-        }}
+        style={
+          poster_path
+            ? {
+                background: `url('${imgBaseUrl}${poster_path}')no-repeat center center/cover`,
+              }
+            : {}
+        }
       >
         <div className={`about-overlay ${overlayVisible ? "visible" : ""} `}>
           <p>{overview}</p>
@@ -94,7 +175,7 @@ const Card: React.FC<details> = ({
           {tvShow ? original_name : title}
         </h3>
         <span className={`tooltip ${tooltipVisible ? "visible" : ""} `}>
-          {title}
+          {tvShow ? original_name : title}
         </span>
         <p>{language ? language.english_name : "Unknown"}</p>
         <div className="release-date">

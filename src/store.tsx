@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import endpointsReducer from "./slices/endpoints";
+import movieImagesReducer from "./slices/movieImages";
 
 const store = configureStore({
   reducer: {
     endpoints: endpointsReducer,
+    images: movieImagesReducer,
   },
 });
 

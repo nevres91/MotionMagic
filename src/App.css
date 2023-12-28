@@ -268,7 +268,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: rgb(0, 0, 0);
   background: linear-gradient(
     0deg,
@@ -283,12 +284,28 @@
   position: absolute;
   top: 0;
   left: 0;
-  background: url("./img/marvel6.png") no-repeat center center/cover;
-  height: 100%;
   width: 100%;
+  height: 50%;
   z-index: 1;
-  transform: translateY(-100px);
+  overflow: hidden;
+  background: transparent;
 }
+.landing-overlay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+.landing-overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+}
+
 /* .landing-body .search-h1 {
   margin: auto;
   margin-top: 150px;
@@ -325,21 +342,22 @@
   font-size: 20px;
   border: none;
   border-radius: 30px 0 0 30px;
-  background: rgba(255, 255, 255, 0.313);
-  backdrop-filter: blur(2px);
+  background: rgba(20, 19, 19, 0.313);
+  backdrop-filter: blur(4px);
   transition: all ease-in-out 0.2s;
+  color: rgb(178, 178, 178);
 }
 .landing-search-bar input::placeholder {
-  color: black;
+  color: rgb(178, 178, 178);
 }
 .landing-search-bar input:focus {
   backdrop-filter: blur(4px);
-  border: 1px solid black;
+  border: 2px solid rgb(178, 178, 178);
   border-right: none;
 }
 .landing-search-bar input:focus + button {
   backdrop-filter: blur(4px);
-  border: 1px solid black;
+  border: 2px solid rgb(178, 178, 178);
   border-left: none;
 }
 .landing-search-bar button {
@@ -352,19 +370,19 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: rgba(255, 255, 255, 0.313);
-  backdrop-filter: blur(2px);
+  background: rgba(20, 19, 19, 0.313);
+  backdrop-filter: blur(4px);
   border-radius: 0 30px 30px 0;
 }
 .landing-search-bar button span {
   scale: 1.9;
   cursor: pointer;
   transition: all ease-in-out 0.1s;
-  color: rgb(45, 45, 45);
+  color: rgb(153, 153, 153);
 }
 .landing-search-bar button:hover span {
   scale: 2.4;
-  color: rgb(0, 0, 0);
+  color: rgb(194, 193, 193);
 }
 
 .page-btns {
@@ -377,16 +395,17 @@
 .page-btns button {
   all: unset;
   padding: 15px 10px 15px 10px;
-  background: rgba(197, 197, 197, 0.2);
+  background: rgba(23, 23, 23, 0.386);
+  backdrop-filter: blur(4px);
   border-radius: 5px;
   cursor: pointer;
   margin: 3px;
 }
 .page-btns button:hover {
-  background: rgba(197, 197, 197, 0.4);
+  background: rgba(100, 100, 100, 0.703);
 }
 .page-btns .current-pg {
-  background: rgba(197, 197, 197, 0.4);
+  background: rgba(0, 0, 0, 0.74);
   scale: 1.1;
 }
 .page-btns .first-last {
@@ -528,7 +547,7 @@
   display: flex;
   height: 80%;
   width: 100%;
-  background: url("./img/movie.jpg") no-repeat center center/cover;
+  background: url("./img/cover.png") no-repeat center center/cover;
   z-index: 2;
 }
 
@@ -735,4 +754,170 @@
   .card {
     width: 95%;
   }
+}
+
+/* !Movie Details Page */
+.details-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgb(0, 0, 0);
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(68, 16, 128, 1) 100%
+  );
+  /* height: 100dvh; */
+  margin: auto;
+}
+
+.details-container {
+  margin: auto;
+  height: 100dvh;
+  max-width: 1500px;
+  width: 100%;
+}
+
+.details-movie-image {
+  position: relative;
+  top: 10px;
+  height: 50%;
+  width: 100%;
+  background: url("./img/backdrop.png") no-repeat center center/cover;
+  border-radius: 0 150px 0 150px;
+  box-shadow: -7px -7px 19px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: -7px -7px 19px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: -7px -7px 19px 0px rgba(0, 0, 0, 0.75);
+}
+
+.overview-container {
+  /* border: 3px solid blue; */
+  display: flex;
+  position: absolute;
+  left: 0;
+  bottom: -55%;
+  width: 100%;
+  /* height: 305px; */
+}
+.overview-content {
+  width: 100%;
+  /* border: 3px solid magenta; */
+}
+.movie-overview {
+  /* border: 3px solid green; */
+  border-radius: 20px;
+  margin: 20px;
+  width: 80%;
+  height: 260px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  font-family: "Lato";
+  color: rgb(219, 217, 217);
+  padding: 20px;
+  overflow: auto;
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.movie-overview::-webkit-scrollbar {
+  color: transparent;
+  width: 0;
+}
+.other-details {
+  flex-direction: column;
+  /* border: 3px solid purple; */
+  font-family: "Lato";
+  color: rgb(219, 217, 217);
+  width: 80%;
+  height: 90px;
+  margin: 0 20px 0 20px;
+  padding: 0 10px 0 10px;
+}
+.other-details ul {
+  display: flex;
+  /* flex-direction: column; */
+  flex-wrap: wrap;
+  column-count: 2;
+  /* max-height: 100%; */
+  list-style: none;
+}
+.other-details ul li {
+  /* background: rgba(242, 137, 137, 0.5); */
+  padding: 2px;
+  flex: 1 0 50%;
+}
+.other-details span {
+  /* border: 1px solid white; */
+  background: rgba(128, 128, 128, 0.353);
+  border-radius: 7px;
+  padding: 1px 7px;
+}
+.other-details .imdb {
+  color: transparent;
+  background: url("./img/imdb4.png") no-repeat center center/cover;
+}
+.movie-card {
+  /* border: 2px solid red; */
+  height: 400px;
+  margin-left: 70px;
+}
+.trailer-btn {
+  position: relative;
+  all: unset;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  background: rgba(224, 22, 170, 0.5);
+  width: 100%;
+  height: 50px;
+  border-radius: 5px;
+  margin-top: 10px;
+  font-family: "Lato";
+  color: rgb(219, 217, 217);
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  transition: all ease-in-out 0.1s;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+.trailer-btn span {
+  scale: 1.7;
+  margin: 0 10px;
+  transition: all ease-in-out 0.1s;
+}
+
+.trailer-btn:hover {
+  background: rgba(224, 22, 170, 0.378);
+  letter-spacing: 6px;
+}
+.trailer-btn:hover span {
+  scale: 2;
+  margin-right: 15px;
+}
+
+.movie-cover {
+  width: 200px;
+  height: 300px;
+  aspect-ratio: 1/1.5;
+  background: url("./img/cover.png") no-repeat center center/cover;
+  background-size: contain;
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.similar-container {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  max-width: 1500px;
+  width: 100%;
+  font-family: "lato";
+  transform: translateY(-3%);
+}
+.similar-container h1 {
+  margin-left: 1%;
 }
