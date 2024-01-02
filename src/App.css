@@ -233,14 +233,17 @@
   border: 2px solid black;
   border-top-left-radius: 7px;
   border-bottom-left-radius: 7px;
-  margin-right: 1px;
+  /* margin-right: 1px; */
   transition: all 0.2s ease;
 }
-.search-input:hover {
+.search-bar .search-input {
+  margin-right: 2px;
+}
+.search-bar .search-input:hover {
   border: 2px solid rgba(255, 255, 255, 0.16);
 }
 
-.search-input:focus {
+.search-bar .search-input:focus {
   border: 2px solid #a970ff;
   background-color: #0e0e10;
 }
@@ -331,6 +334,10 @@
   border-radius: 30px;
   overflow: hidden;
   z-index: 3;
+  transition: all ease-in-out 0.2s;
+}
+.landing-search-bar:hover {
+  scale: 1.01;
 }
 
 .landing-search-bar input {
@@ -347,12 +354,24 @@
   transition: all ease-in-out 0.2s;
   color: rgb(178, 178, 178);
 }
+
+.landing-search-bar input:hover {
+  outline: none;
+  /* border: 1px solid black; */
+  border-right: none;
+}
+.landing-search-bar input:hover + button {
+  /* border: 1px solid black; */
+  border-left: none;
+}
 .landing-search-bar input::placeholder {
   color: rgb(178, 178, 178);
 }
 .landing-search-bar input:focus {
   backdrop-filter: blur(4px);
   border: 2px solid rgb(178, 178, 178);
+  background: rgba(20, 19, 19, 0.313);
+
   border-right: none;
 }
 .landing-search-bar input:focus + button {

@@ -40,6 +40,7 @@ const endpoints = createSlice({
     tvShow: false as boolean,
     movieId: "" as string,
     movieDetails: {} as details,
+    currentPage: 1 as number,
   },
   reducers: {
     changeEndpoint(state, action) {
@@ -54,9 +55,12 @@ const endpoints = createSlice({
     moviesDetails(state, action) {
       state.movieDetails = action.payload;
     },
+    setPage(state, action) {
+      state.currentPage = action.payload;
+    },
   },
 });
 
-export const { changeEndpoint, tvShow, setId, moviesDetails } =
+export const { changeEndpoint, tvShow, setId, moviesDetails, setPage } =
   endpoints.actions;
 export default endpoints.reducer;

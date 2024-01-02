@@ -5,9 +5,11 @@ import { request, similarMovies } from "../Api";
 import { fetchImages, singleImage } from "../slices/movieImages";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
+import { setPage } from "../slices/endpoints";
 
 type details = {
   id: string;
+  name: string;
   original_language: string;
   poster_path: string;
   title: string;
@@ -53,29 +55,35 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
   // console.log("rendered");
   const bodyWindow = document.querySelector(".landing-body");
   const [showItems, setShowItems] = useState<details[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
+  let [total_pages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
   const backdropImages: string[] = [];
-  const total_pages = 500;
+  // const total_pages = 500;
   const randomImages = useSelector(
     (state: RootState) => state.images.randomImage
+  );
+  const currentPage = useSelector(
+    (state: RootState) => state.endpoints.currentPage
   );
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
+        setLoading(true);
         const res = await request(`${endpoint}`, {
           params: {
             page: currentPage,
           },
         });
-        const { results } = res.data;
-        // console.log(results);
+        let { results, total_pages } = res.data;
+        // console.log(res.data);
+        setTotalPages(total_pages > 500 ? (total_pages = 500) : total_pages);
         results.forEach((result: any) => {
           backdropImages.push(result.backdrop_path);
         });
         // console.log(backdropImages);
-
         const secondaryRequests = results.map(async (result: any) => {
           const secondaryRes = await request(
             `${tvShow ? `tv/${result.id}` : `movie/${result.id}`}`,
@@ -102,6 +110,8 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
         // console.log(details);
         const details = await Promise.all(secondaryRequests);
         setShowItems(details);
+        setLoading(false);
+
         // console.log(details);
         dispatch(fetchImages(backdropImages));
       } catch (error) {
@@ -113,14 +123,14 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
 
   // Next Page Buttons
   const nextPage = () => {
-    setCurrentPage(currentPage + 1);
+    dispatch(setPage(currentPage + 1));
     if (bodyWindow) {
       bodyWindow.scrollTo(0, 0);
     }
   };
   // Previous Page Buttons
   const previousPage = () => {
-    setCurrentPage(currentPage - 1);
+    dispatch(setPage(currentPage - 1));
     if (bodyWindow) {
       bodyWindow.scrollTo(0, 0);
     }
@@ -128,7 +138,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
 
   // Page Button
   const pageButton = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    dispatch(setPage(pageNumber));
     if (bodyWindow) {
       bodyWindow.scrollTo(0, 0);
     }
@@ -139,103 +149,81 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
       <div className="trending-content">
         <h2>{h2}</h2>
         {/* pagination buttons */}
+        {/* pagination buttons bottom */}
         {currentPage === 1 ? (
           <div className="page-btns">
-            {currentPage > 3 ? (
-              <button
-                onClick={() => {
-                  pageButton(currentPage - 3);
-                  if (bodyWindow) {
-                    bodyWindow.scrollTo(0, 0);
-                  }
-                }}
-                className="page-btn"
-              >
-                {currentPage - 3}
-              </button>
-            ) : (
-              ""
-            )}
-            {currentPage > 2 ? (
-              <button
-                onClick={() => {
-                  pageButton(currentPage - 2);
-                  if (bodyWindow) {
-                    bodyWindow.scrollTo(0, 0);
-                  }
-                }}
-                className="page-btn"
-              >
-                {currentPage - 2}
-              </button>
-            ) : (
-              ""
-            )}
-            {currentPage >= 2 ? (
-              <button
-                onClick={() => {
-                  pageButton(currentPage - 1);
-                  if (bodyWindow) {
-                    bodyWindow.scrollTo(0, 0);
-                  }
-                }}
-                className="page-btn"
-              >
-                {currentPage - 1}
-              </button>
-            ) : (
-              ""
-            )}
+            {/* Current page */}
             <button className="current-pg">{currentPage}</button>
-            <button
-              onClick={() => {
-                pageButton(currentPage + 1);
-                if (bodyWindow) {
-                  bodyWindow.scrollTo(0, 0);
-                }
-              }}
-              className="page-btn"
-            >
-              {currentPage + 1}
-            </button>
-            <button
-              onClick={() => {
-                pageButton(currentPage + 2);
-                if (bodyWindow) {
-                  bodyWindow.scrollTo(0, 0);
-                }
-              }}
-              className="page-btn"
-            >
-              {currentPage + 2}
-            </button>
-            <button
-              onClick={() => {
-                pageButton(currentPage + 3);
-                if (bodyWindow) {
-                  bodyWindow.scrollTo(0, 0);
-                }
-              }}
-              className="page-btn"
-            >
-              {currentPage + 3}
-            </button>
-            <button
-              className="next-btn"
-              onClick={() => {
-                nextPage();
-                if (bodyWindow) {
-                  bodyWindow.scrollTo(0, 0);
-                }
-              }}
-            >
-              <span className="material-symbols-outlined">
-                arrow_forward_ios
-              </span>
-            </button>
+            {/* Current page +1 */}
+            {total_pages >= 2 ? (
+              <button
+                onClick={() => {
+                  pageButton(currentPage + 1);
+                  if (bodyWindow) {
+                    bodyWindow.scrollTo(0, 0);
+                  }
+                }}
+                className="page-btn"
+              >
+                {currentPage + 1}
+              </button>
+            ) : (
+              ""
+            )}
+            {/* Current Page +2 */}
+            {total_pages >= 3 ? (
+              <button
+                onClick={() => {
+                  pageButton(currentPage + 2);
+                  if (bodyWindow) {
+                    bodyWindow.scrollTo(0, 0);
+                  }
+                }}
+                className="page-btn"
+              >
+                {currentPage + 2}
+              </button>
+            ) : (
+              ""
+            )}
+            {/* Current page +3 */}
+            {total_pages >= 3 ? (
+              <button
+                onClick={() => {
+                  pageButton(currentPage + 3);
+                  if (bodyWindow) {
+                    bodyWindow.scrollTo(0, 0);
+                  }
+                }}
+                className="page-btn"
+              >
+                {currentPage + 3}
+              </button>
+            ) : (
+              ""
+            )}
+            {/* Next Button */}
+            {total_pages > currentPage ? (
+              <button
+                className="next-btn"
+                onClick={() => {
+                  nextPage();
+                  if (bodyWindow) {
+                    bodyWindow.scrollTo(0, 0);
+                  }
+                }}
+              >
+                <span className="material-symbols-outlined">
+                  arrow_forward_ios
+                </span>
+              </button>
+            ) : (
+              ""
+            )}
           </div>
         ) : (
           <div className="page-btns">
+            {/* Jump to first page Button */}
             <button
               className="first-last"
               onClick={() => {
@@ -247,6 +235,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             >
               <span className="material-symbols-outlined">first_page</span>
             </button>
+            {/* Previous page Button */}
             <button
               className="prev-btn"
               onClick={() => {
@@ -258,7 +247,9 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             >
               <span className="material-symbols-outlined">arrow_back_ios</span>
             </button>
+
             {currentPage > 3 ? (
+              // *Current page -3
               <button
                 onClick={() => {
                   pageButton(currentPage - 3);
@@ -274,6 +265,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
               ""
             )}
             {currentPage > 2 ? (
+              // *Current page -2
               <button
                 onClick={() => {
                   pageButton(currentPage - 2);
@@ -289,6 +281,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
               ""
             )}
             {currentPage >= 2 ? (
+              // *Current page -1
               <button
                 onClick={() => {
                   pageButton(currentPage - 1);
@@ -303,10 +296,13 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             ) : (
               ""
             )}
+            {/* Current Page */}
             <button className="current-pg">{currentPage}</button>
-            {currentPage >= 500 ? (
+
+            {currentPage >= total_pages ? (
               ""
             ) : (
+              // *Current page +1
               <button
                 onClick={() => {
                   pageButton(currentPage + 1);
@@ -319,9 +315,11 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
                 {currentPage + 1}
               </button>
             )}
-            {currentPage >= 499 ? (
+
+            {currentPage >= total_pages - 1 ? (
               ""
             ) : (
+              // *Current page +2
               <button
                 onClick={() => {
                   pageButton(currentPage + 2);
@@ -334,10 +332,10 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
                 {currentPage + 2}
               </button>
             )}
-
-            {currentPage >= 498 ? (
+            {currentPage >= total_pages - 2 ? (
               ""
             ) : (
+              // *Current page +3
               <button
                 onClick={() => {
                   pageButton(currentPage + 3);
@@ -350,7 +348,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
                 {currentPage + 3}
               </button>
             )}
-            {currentPage >= 500 ? (
+            {currentPage >= total_pages ? (
               ""
             ) : (
               <button
@@ -382,7 +380,8 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
         )}
         {/* ------------------------ */}
         <div className="cards-container">
-          {showItems.length < 1 ? (
+          {/* {showItems.length < 1 ? ( */}
+          {loading ? (
             <div className="loader">
               <div className="loader__circle"></div>
               <div className="loader__circle"></div>
@@ -411,7 +410,8 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
                   backdrop_path={item.backdrop_path}
                   production_companies={item.production_companies}
                   genres={item.genres}
-                  show_name={item.show_name}
+                  show_name={item.name}
+                  name={item.name}
                   trailerVideos={item.trailerVideos}
                   videos={item.videos}
                 />
@@ -422,101 +422,78 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
         {/* pagination buttons bottom */}
         {currentPage === 1 ? (
           <div className="page-btns">
-            {currentPage > 3 ? (
-              <button
-                onClick={() => {
-                  pageButton(currentPage - 3);
-                  if (bodyWindow) {
-                    bodyWindow.scrollTo(0, 0);
-                  }
-                }}
-                className="page-btn"
-              >
-                {currentPage - 3}
-              </button>
-            ) : (
-              ""
-            )}
-            {currentPage > 2 ? (
-              <button
-                onClick={() => {
-                  pageButton(currentPage - 2);
-                  if (bodyWindow) {
-                    bodyWindow.scrollTo(0, 0);
-                  }
-                }}
-                className="page-btn"
-              >
-                {currentPage - 2}
-              </button>
-            ) : (
-              ""
-            )}
-            {currentPage >= 2 ? (
-              <button
-                onClick={() => {
-                  pageButton(currentPage - 1);
-                  if (bodyWindow) {
-                    bodyWindow.scrollTo(0, 0);
-                  }
-                }}
-                className="page-btn"
-              >
-                {currentPage - 1}
-              </button>
-            ) : (
-              ""
-            )}
+            {/* Current page */}
             <button className="current-pg">{currentPage}</button>
-            <button
-              onClick={() => {
-                pageButton(currentPage + 1);
-                if (bodyWindow) {
-                  bodyWindow.scrollTo(0, 0);
-                }
-              }}
-              className="page-btn"
-            >
-              {currentPage + 1}
-            </button>
-            <button
-              onClick={() => {
-                pageButton(currentPage + 2);
-                if (bodyWindow) {
-                  bodyWindow.scrollTo(0, 0);
-                }
-              }}
-              className="page-btn"
-            >
-              {currentPage + 2}
-            </button>
-            <button
-              onClick={() => {
-                pageButton(currentPage + 3);
-                if (bodyWindow) {
-                  bodyWindow.scrollTo(0, 0);
-                }
-              }}
-              className="page-btn"
-            >
-              {currentPage + 3}
-            </button>
-            <button
-              className="next-btn"
-              onClick={() => {
-                nextPage();
-                if (bodyWindow) {
-                  bodyWindow.scrollTo(0, 0);
-                }
-              }}
-            >
-              <span className="material-symbols-outlined">
-                arrow_forward_ios
-              </span>
-            </button>
+            {/* Current page +1 */}
+            {total_pages >= 2 ? (
+              <button
+                onClick={() => {
+                  pageButton(currentPage + 1);
+                  if (bodyWindow) {
+                    bodyWindow.scrollTo(0, 0);
+                  }
+                }}
+                className="page-btn"
+              >
+                {currentPage + 1}
+              </button>
+            ) : (
+              ""
+            )}
+            {/* Current Page +2 */}
+            {total_pages >= 3 ? (
+              <button
+                onClick={() => {
+                  pageButton(currentPage + 2);
+                  if (bodyWindow) {
+                    bodyWindow.scrollTo(0, 0);
+                  }
+                }}
+                className="page-btn"
+              >
+                {currentPage + 2}
+              </button>
+            ) : (
+              ""
+            )}
+            {/* Current page +3 */}
+            {total_pages >= 3 ? (
+              <button
+                onClick={() => {
+                  pageButton(currentPage + 3);
+                  if (bodyWindow) {
+                    bodyWindow.scrollTo(0, 0);
+                  }
+                }}
+                className="page-btn"
+              >
+                {currentPage + 3}
+              </button>
+            ) : (
+              ""
+            )}
+            {/* Next Button */}
+            {total_pages > currentPage ? (
+              <button
+                className="next-btn"
+                onClick={() => {
+                  nextPage();
+                  if (bodyWindow) {
+                    bodyWindow.scrollTo(0, 0);
+                  }
+                }}
+              >
+                <span className="material-symbols-outlined">
+                  arrow_forward_ios
+                </span>
+              </button>
+            ) : (
+              ""
+            )}
           </div>
         ) : (
           <div className="page-btns">
+            {/* Jump to first page Button */}
             <button
               className="first-last"
               onClick={() => {
@@ -528,6 +505,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             >
               <span className="material-symbols-outlined">first_page</span>
             </button>
+            {/* Previous page Button */}
             <button
               className="prev-btn"
               onClick={() => {
@@ -539,7 +517,9 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             >
               <span className="material-symbols-outlined">arrow_back_ios</span>
             </button>
+
             {currentPage > 3 ? (
+              // *Current page -3
               <button
                 onClick={() => {
                   pageButton(currentPage - 3);
@@ -555,6 +535,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
               ""
             )}
             {currentPage > 2 ? (
+              // *Current page -2
               <button
                 onClick={() => {
                   pageButton(currentPage - 2);
@@ -570,6 +551,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
               ""
             )}
             {currentPage >= 2 ? (
+              // *Current page -1
               <button
                 onClick={() => {
                   pageButton(currentPage - 1);
@@ -584,10 +566,13 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             ) : (
               ""
             )}
+            {/* Current Page */}
             <button className="current-pg">{currentPage}</button>
-            {currentPage >= 500 ? (
+
+            {currentPage >= total_pages ? (
               ""
             ) : (
+              // *Current page +1
               <button
                 onClick={() => {
                   pageButton(currentPage + 1);
@@ -601,9 +586,10 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
               </button>
             )}
 
-            {currentPage >= 499 ? (
+            {currentPage >= total_pages - 1 ? (
               ""
             ) : (
+              // *Current page +2
               <button
                 onClick={() => {
                   pageButton(currentPage + 2);
@@ -616,10 +602,10 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
                 {currentPage + 2}
               </button>
             )}
-
-            {currentPage >= 498 ? (
+            {currentPage >= total_pages - 2 ? (
               ""
             ) : (
+              // *Current page +3
               <button
                 onClick={() => {
                   pageButton(currentPage + 3);
@@ -632,7 +618,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
                 {currentPage + 3}
               </button>
             )}
-            {currentPage >= 500 ? (
+            {currentPage >= total_pages ? (
               ""
             ) : (
               <button

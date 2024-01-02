@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { changeEndpoint, tvShow } from "../slices/endpoints";
+import { changeEndpoint, setPage, tvShow } from "../slices/endpoints";
 import {
   popularMovies,
   topRatedMovies,
@@ -13,21 +13,25 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const handlePopular = () => {
     navigate("/landing");
+    dispatch(setPage(1));
     dispatch(tvShow(false));
     dispatch(changeEndpoint(popularMovies));
   };
   const handleTopRated = () => {
     navigate("/landing");
+    dispatch(setPage(1));
     dispatch(tvShow(false));
     dispatch(changeEndpoint(topRatedMovies));
   };
   const handleTrending = () => {
     navigate("/landing");
+    dispatch(setPage(1));
     dispatch(tvShow(false));
     dispatch(changeEndpoint(trendingMovies));
   };
   const handleShows = () => {
     navigate("/landing");
+    dispatch(setPage(1));
     dispatch(tvShow(true));
     dispatch(changeEndpoint(popularShows));
   };

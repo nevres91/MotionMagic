@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 type details = {
   id: string;
+  name: string;
   original_language: string;
   poster_path: string;
   title: string;
@@ -62,6 +63,7 @@ const Card: React.FC<details> = ({
   show_name,
   trailerVideos,
   videos,
+  name,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -112,7 +114,7 @@ const Card: React.FC<details> = ({
         backdrop_path: backdrop_path,
         poster_path: poster_path,
         genres: genres,
-        show_name: original_name,
+        show_name: name,
         number_of_episodes: number_of_episodes,
         number_of_seasons: number_of_seasons,
         Tvideos: trailerVideos,
@@ -134,7 +136,7 @@ const Card: React.FC<details> = ({
           backdrop_path: backdrop_path,
           poster_path: poster_path,
           genres: genres,
-          show_name: original_name,
+          show_name: name,
           number_of_episodes: number_of_episodes,
           number_of_seasons: number_of_seasons,
           Tvideos: trailerVideos,
@@ -172,10 +174,10 @@ const Card: React.FC<details> = ({
           onMouseLeave={handleMouseLeave}
           className="movie-title"
         >
-          {tvShow ? original_name : title}
+          {tvShow ? show_name : title}
         </h3>
         <span className={`tooltip ${tooltipVisible ? "visible" : ""} `}>
-          {tvShow ? original_name : title}
+          {tvShow ? show_name : title}
         </span>
         <p>{language ? language.english_name : "Unknown"}</p>
         <div className="release-date">

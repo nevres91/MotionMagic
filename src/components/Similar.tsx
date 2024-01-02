@@ -132,6 +132,7 @@ const Similar: React.FC = () => {
                 show_name={item.name}
                 trailerVideos={item.trailerVideos}
                 videos={item.videos}
+                name={item.name}
               />
             );
           })
