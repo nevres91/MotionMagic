@@ -106,6 +106,15 @@ const MovieDetails = () => {
                   <h1>{first_air_date ? show_name : title}</h1>
                   <p>{overview}</p>
                 </div>
+                <div className="button-div">
+                  <button className="trailer-btn">
+                    {" "}
+                    <span className="material-symbols-outlined">
+                      smart_display
+                    </span>
+                    Play Trailer
+                  </button>
+                </div>
                 <div className="other-details">
                   <ul>
                     <li>

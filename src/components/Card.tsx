@@ -159,7 +159,7 @@ const Card: React.FC<details> = ({
             : {}
         }
       >
-        <div className={`about-overlay ${overlayVisible ? "visible" : ""} `}>
+        <div className={`about-overlay ${overlayVisible ? "o-visible" : ""} `}>
           <p>{overview}</p>
         </div>
         <div className="rating">
