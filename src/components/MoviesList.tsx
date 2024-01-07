@@ -57,7 +57,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
   const [showItems, setShowItems] = useState<details[]>([]);
   // const [currentPage, setCurrentPage] = useState(1);
   let [total_pages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const backdropImages: string[] = [];
   // const total_pages = 500;
   const randomImages = useSelector(
@@ -220,6 +220,17 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             ) : (
               ""
             )}
+            <button
+              className="first-last"
+              onClick={() => {
+                pageButton(total_pages);
+                if (bodyWindow) {
+                  bodyWindow.scrollTo(0, 0);
+                }
+              }}
+            >
+              <span className="material-symbols-outlined">last_page</span>
+            </button>
           </div>
         ) : (
           <div className="page-btns">
@@ -490,6 +501,17 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             ) : (
               ""
             )}
+            <button
+              className="first-last"
+              onClick={() => {
+                pageButton(total_pages);
+                if (bodyWindow) {
+                  bodyWindow.scrollTo(0, 0);
+                }
+              }}
+            >
+              <span className="material-symbols-outlined">last_page</span>
+            </button>
           </div>
         ) : (
           <div className="page-btns">

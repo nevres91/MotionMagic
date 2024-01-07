@@ -1,8 +1,40 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { changeEndpoint, setPage } from "../slices/endpoints";
+import { RootState } from "../store";
+import SocialMedia from "./SocialMedia";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
+
+  // *Search Button
+  const search = () => {
+    const searchInput = document.querySelector(
+      ".search-input"
+    ) as HTMLInputElement;
+    if (searchInput.value !== "") {
+      navigate("/landing");
+      dispatch(setPage(1));
+      dispatch(
+        changeEndpoint(
+          tvShow
+            ? `search/tv?query=${searchInput.value}&include_adult=false&page=1`
+            : `search/movie?query=${searchInput.value}&include_adult=false&page=1`
+        )
+      );
+
+      searchInput.value = "";
+    }
+  };
+  // *Search on Enter press
+  const enter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      search();
+    }
+  };
   return (
     <div className="dashboard-body">
       <div className="dashboard-banner">
@@ -11,8 +43,9 @@ const Dashboard: React.FC = () => {
             type="text"
             placeholder="search for a movie..."
             className="search-input"
+            onKeyDown={enter}
           />
-          <button className="search-btn">
+          <button onClick={search} className="search-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -140,11 +173,7 @@ const Dashboard: React.FC = () => {
           Motionmagic and watch it later if you want.
         </p>
       </div>
-      <div className="social-media">
-        <button className="github"></button>
-        <button className="facebook"></button>
-        <button className="linkedin"></button>
-      </div>
+      <SocialMedia />
     </div>
   );
 };

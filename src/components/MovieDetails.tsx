@@ -107,7 +107,7 @@ const MovieDetails = () => {
                   <p>{overview}</p>
                 </div>
                 <div className="button-div">
-                  <button className="trailer-btn">
+                  <button onClick={playTrailer} className="trailer-btn">
                     {" "}
                     <span className="material-symbols-outlined">
                       smart_display

@@ -176,7 +176,7 @@ const Card: React.FC<details> = ({
         >
           {tvShow ? show_name : title}
         </h3>
-        <span className={`tooltip ${tooltipVisible ? "visible" : ""} `}>
+        <span className={`tooltip ${tooltipVisible ? "tt-visible" : ""} `}>
           {tvShow ? show_name : title}
         </span>
         <p>{language ? language.english_name : "Unknown"}</p>

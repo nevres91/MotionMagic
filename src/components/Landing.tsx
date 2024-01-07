@@ -2,6 +2,7 @@ import { RootState } from "../store";
 import MoviesList from "./MoviesList";
 import { useDispatch, useSelector } from "react-redux";
 import { changeEndpoint, setPage } from "../slices/endpoints";
+import SocialMedia from "./SocialMedia";
 
 const Landing: React.FC = () => {
   // console.log("Landing rendered");
@@ -80,10 +81,13 @@ const Landing: React.FC = () => {
               ? "Top Rated Movies:"
               : endpoint === "tv/popular"
               ? "Popular TV-Shows:"
-              : "Trending Movies:"
+              : endpoint === "trending/movie/day"
+              ? "Trending Movies:"
+              : "Search Results:"
           }
           showButtons={false}
         />
+        <SocialMedia />
       </div>
     </>
   );
