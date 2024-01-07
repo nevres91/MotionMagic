@@ -6,6 +6,7 @@ import { RootState } from "../store";
 import axios from "axios";
 import { moviesDetails, setId } from "../slices/endpoints";
 import Card from "./Card";
+import SocialMedia from "./SocialMedia";
 
 type details = {
   id: string;
@@ -138,6 +139,7 @@ const Similar: React.FC = () => {
           })
         )}
       </div>
+      <SocialMedia />
     </div>
   );
 };

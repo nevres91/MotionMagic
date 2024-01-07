@@ -187,7 +187,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
               ""
             )}
             {/* Current page +3 */}
-            {total_pages >= 3 ? (
+            {total_pages > 3 ? (
               <button
                 onClick={() => {
                   pageButton(currentPage + 3);
@@ -468,7 +468,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
               ""
             )}
             {/* Current page +3 */}
-            {total_pages >= 3 ? (
+            {total_pages > 3 ? (
               <button
                 onClick={() => {
                   pageButton(currentPage + 3);
