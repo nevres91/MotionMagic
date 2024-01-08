@@ -2,6 +2,7 @@ import axios from "axios";
 export const appendToResponse = "&append_to_response=";
 
 export const imgBaseUrl = "https://image.tmdb.org/t/p/w500";
+export const imgBaseUrlMobile = "https://image.tmdb.org/t/p/w300";
 
 //  Movies
 export const popularMovies = "movie/popular";

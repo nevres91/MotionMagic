@@ -788,13 +788,13 @@
     font-size: 13px;
   }
 }
+/* !Simplify card for smoother scrolling on mobile devices */
 @media (max-width: 550px) {
   .card {
     width: 46.5%;
   }
   .trending-container {
     margin-top: 0;
-    /* color: rgb(24, 24, 24); */
   }
   .card-details {
     font-size: 16px;
@@ -802,8 +802,8 @@
   .trending-content h2 {
     align-self: baseline;
     margin-left: 2.5%;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(3px);
+    /* background: rgba(255, 255, 255, 0.3); */
+    /* backdrop-filter: blur(3px); */
     padding: 5px;
     border-radius: 10px;
   }
@@ -813,7 +813,17 @@
   .landing-search-bar {
     margin-top: 60px;
   }
+  .about-overlay {
+    display: none;
+  }
+  .tooltip {
+    display: none;
+  }
+  .card::before {
+    display: none;
+  }
 }
+/* !------------------------------------------ */
 @media (max-width: 450px) {
   .card-details {
     font-size: 13px;

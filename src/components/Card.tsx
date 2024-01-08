@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { imgBaseUrl } from "../Api";
+import React, { useEffect, useState } from "react";
+import { imgBaseUrl, imgBaseUrlMobile } from "../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { singleImage } from "../slices/movieImages";
@@ -70,6 +70,12 @@ const Card: React.FC<details> = ({
   const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
   const language = spoken_languages[0];
   const { imdbRating } = omdbData;
+  // *Resizing card image for lower resolutions (scrolling laggy on mobile devices)
+  const [image, setImage] = useState(imgBaseUrl);
+  useEffect(() => {
+    const screenWidth = window.innerWidth;
+    setImage(screenWidth < 500 ? imgBaseUrlMobile : imgBaseUrl);
+  }, []);
   // *Extracting year from release date
   function trimDate(date: string) {
     if (date) {
@@ -154,7 +160,7 @@ const Card: React.FC<details> = ({
         style={
           poster_path
             ? {
-                background: `url('${imgBaseUrl}${poster_path}')no-repeat center center/cover`,
+                background: `url('${image}${poster_path}')no-repeat center center/cover`,
               }
             : {}
         }
