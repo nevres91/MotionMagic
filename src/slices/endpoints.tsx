@@ -8,6 +8,7 @@ type Genres = {
   name: string;
 };
 
+// * Global state Selected Movie or Show details
 type details = {
   title: string;
   overview: string;
@@ -43,19 +44,19 @@ const endpoints = createSlice({
     currentPage: 1 as number,
   },
   reducers: {
-    changeEndpoint(state, action) {
+    changeEndpoint(state, action: { payload: string }) {
       state.currentEndpoint = action.payload;
     },
-    tvShow(state, action) {
+    tvShow(state, action: { payload: boolean }) {
       state.tvShow = action.payload;
     },
-    setId(state, action) {
+    setId(state, action: { payload: string }) {
       state.movieId = action.payload;
     },
     moviesDetails(state, action) {
       state.movieDetails = action.payload;
     },
-    setPage(state, action) {
+    setPage(state, action: { payload: number }) {
       state.currentPage = action.payload;
     },
   },

@@ -52,7 +52,8 @@ const Similar: React.FC = () => {
   const movieId = useSelector((state: RootState) => state.endpoints.movieId);
 
   useEffect(() => {
-    dispatch(setId(localStorage.getItem("MovieID")));
+    const movieId: string = localStorage.getItem("MovieID")!;
+    dispatch(setId(movieId));
     const fetchItems = async () => {
       try {
         if (movieId) {
