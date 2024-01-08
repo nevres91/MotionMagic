@@ -1,3 +1,8 @@
+# Motion Magic - Movies Website
+Motion Magic is a web application built with React and TypeScript, designed for exploring and discovering information about movies.
+## Demo:
+visit the [MotionMagic](https://motion-magic.netlify.app/) website for a live demo.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
