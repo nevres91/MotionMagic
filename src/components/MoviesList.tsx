@@ -109,10 +109,16 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
         });
         // console.log(details);
         const details = await Promise.all(secondaryRequests);
-        setShowItems(details);
+        // *Sort Items by IMDB Rating (Descending)
+        const sortedDetails = details.slice().sort((a, b) => {
+          const ratingA = parseFloat(a.omdbData.imdbRating);
+          const ratingB = parseFloat(b.omdbData.imdbRating);
+          const numericRatingA = isNaN(ratingA) ? -Infinity : ratingA;
+          const numericRatingB = isNaN(ratingB) ? -Infinity : ratingB;
+          return numericRatingB - numericRatingA;
+        });
+        setShowItems(sortedDetails);
         setLoading(false);
-
-        // console.log(details);
         dispatch(fetchImages(backdropImages));
       } catch (error) {
         console.log("something went south:", error);
@@ -391,7 +397,6 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
         )}
         {/* ------------------------ */}
         <div className="cards-container">
-          {/* {showItems.length < 1 ? ( */}
           {loading ? (
             <div className="loader">
               <div className="loader__circle"></div>
