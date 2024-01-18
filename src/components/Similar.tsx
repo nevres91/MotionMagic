@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import axios from "axios";
-import { moviesDetails, setId } from "../slices/endpoints";
+import { setId } from "../slices/endpoints";
 import Card from "./Card";
 import SocialMedia from "./SocialMedia";
+import { AppDispatch } from "../store";
 
 type details = {
   id: string;
@@ -29,7 +30,10 @@ type details = {
     results: {}[];
   };
   videos: {
-    results: {}[];
+    results: {
+      name: string;
+      key: string;
+    }[];
   };
   spoken_languages: {
     english_name: string;
@@ -45,8 +49,71 @@ type details = {
   };
 };
 
+interface Response<TData> {
+  data: TData;
+}
+type ResponseData = Response<{
+  id: string;
+  name: string;
+  original_language: string;
+  poster_path: string;
+  title: string;
+  original_name: string;
+  overview: string;
+  release_date: string;
+  first_air_date: string;
+  runtime: number;
+  number_of_episodes: number;
+  number_of_seasons: number;
+  production_companies: [];
+  genres: [];
+  show_name: string;
+  backdrop_path: string;
+  trailerVideos: {
+    results: {}[];
+  };
+  videos: {
+    results: {
+      name: string;
+      key: string;
+    }[];
+  };
+  spoken_languages: {
+    english_name: string;
+    iso_639_1?: string;
+    name?: string;
+  }[];
+  omdbData: {
+    imdbRating: string;
+    Country: string;
+    Director: string;
+    Actors: string[];
+    Genre: string[];
+  };
+  page: number;
+  results: {
+    backdrop_path: string;
+    id: string;
+  }[];
+  total_pages: number;
+  imdb_id: number;
+  external_ids: {
+    imdb_id: number;
+  };
+}>;
+interface OmdbResponse<OData> {
+  data: OData;
+}
+type OmdbResponseData = OmdbResponse<{
+  imdbRating: string;
+  Country: string;
+  Director: string;
+  Actors: string[];
+  Genre: string[];
+}>;
+
 const Similar: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
   const [showItems, setShowItems] = useState<details[]>([]);
   const movieId = useSelector((state: RootState) => state.endpoints.movieId);
@@ -57,12 +124,12 @@ const Similar: React.FC = () => {
     const fetchItems = async () => {
       try {
         if (movieId) {
-          const response = await request(
+          const response: ResponseData = await request(
             tvShow ? `tv/${movieId}/similar` : `movie/${movieId}/similar`
           );
           const { results } = response.data;
           const idRequest = results.map(async (result: any) => {
-            const res = await request(
+            const res: ResponseData = await request(
               `${tvShow ? `tv/${result.id}` : `movie/${result.id}`}`,
               {
                 params: {
@@ -75,12 +142,15 @@ const Similar: React.FC = () => {
               ? res.data.imdb_id
               : res.data.external_ids.imdb_id;
 
-            const omdbRes = await axios.get(`https://www.omdbapi.com/`, {
-              params: {
-                apikey: process.env.REACT_APP_OMDB_API_KEY,
-                i: imdb_id,
-              },
-            });
+            const omdbRes: OmdbResponseData = await axios.get(
+              `https://www.omdbapi.com/`,
+              {
+                params: {
+                  apikey: process.env.REACT_APP_OMDB_API_KEY,
+                  i: imdb_id,
+                },
+              }
+            );
             return {
               ...res.data,
               omdbData: omdbRes.data,
@@ -89,7 +159,6 @@ const Similar: React.FC = () => {
           });
           const details = await Promise.all(idRequest);
           setShowItems(details);
-          // console.log(showItems);
         }
       } catch (error) {
         console.log("something went similar:", error);
@@ -97,7 +166,6 @@ const Similar: React.FC = () => {
     };
     fetchItems();
   }, [movieId]);
-  // console.log(showItems);
   return (
     <div className="similar-container">
       <h1>You may also like:</h1>

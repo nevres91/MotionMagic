@@ -1,16 +1,31 @@
 import { useDispatch, useSelector } from "react-redux";
-import store, { RootState } from "../store";
+import { RootState } from "../store";
 import Similar from "./Similar";
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { moviesDetails } from "../slices/endpoints";
+import { AppDispatch } from "../store";
+
+// interface Videos<Results>{
+//   results: Results
+// }
+
+// type VideosResults = Videos<{
+//     name: string;
+//     key: string;
+// }>
+type VideosResults = {
+  results: {
+    name: string;
+    key: string;
+  }[];
+};
 
 const MovieDetails = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const movieDetails = useSelector(
     (state: RootState) => state.endpoints.movieDetails
   );
+  // *Check if movieDetails object is empty.
   const isMovieDetailsEmpty = Object.keys(movieDetails).length === 0;
   useEffect(() => {
     const storedDetails = localStorage.getItem("DETAILS");
@@ -38,7 +53,6 @@ const MovieDetails = () => {
     number_of_episodes,
     number_of_seasons,
     videos,
-    Tvideos,
   } = movieDetails;
 
   // *Extracting year from release date
@@ -56,10 +70,9 @@ const MovieDetails = () => {
     if (videos) {
       const filteredVideos = videos.results
         .filter(
-          (video: any) =>
-            video.name && video.name.toLowerCase().includes("trailer")
+          (video) => video.name && video.name.toLowerCase().includes("trailer")
         )
-        .map((video: any) => {
+        .map((video) => {
           return video.key;
         });
       window.open(`https://www.youtube.com/watch?v=${filteredVideos[0]}`);

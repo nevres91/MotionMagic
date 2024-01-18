@@ -1,0 +1,19 @@
+{
+	"geolocation": {
+		"data": {
+			"city": "Kalesija",
+			"country": {
+				"code": "BA",
+				"name": "Bosnia and Herzegovina"
+			},
+			"subdivision": {
+				"code": "BIH",
+				"name": "Federation of Bosnia and Herzegovina"
+			},
+			"timezone": "Europe/Sarajevo",
+			"latitude": 44.4398,
+			"longitude": 18.9066
+		},
+		"timestamp": 1705326799852
+	}
+}

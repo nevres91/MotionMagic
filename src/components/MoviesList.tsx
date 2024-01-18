@@ -1,11 +1,12 @@
 import axios from "axios";
 import Card from "./Card";
 import { useEffect, useState } from "react";
-import { request, similarMovies } from "../Api";
-import { fetchImages, singleImage } from "../slices/movieImages";
+import { request } from "../Api";
+import { fetchImages } from "../slices/movieImages";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { setPage } from "../slices/endpoints";
+import { AppDispatch } from "../store";
 
 type details = {
   id: string;
@@ -28,7 +29,10 @@ type details = {
     results: {}[];
   };
   videos: {
-    results: {}[];
+    results: {
+      name: string;
+      key: string;
+    }[];
   };
   spoken_languages: {
     english_name: string;
@@ -51,41 +55,98 @@ type Props = {
   h2: string;
 };
 
-const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
-  // console.log("rendered");
+interface Response<TData> {
+  data: TData;
+}
+type ResponseData = Response<{
+  id: string;
+  name: string;
+  original_language: string;
+  poster_path: string;
+  title: string;
+  original_name: string;
+  overview: string;
+  release_date: string;
+  first_air_date: string;
+  runtime: number;
+  number_of_episodes: number;
+  number_of_seasons: number;
+  production_companies: [];
+  genres: [];
+  show_name: string;
+  backdrop_path: string;
+  trailerVideos: {
+    results: {}[];
+  };
+  videos: {
+    results: {
+      name: string;
+      key: string;
+    }[];
+  };
+  spoken_languages: {
+    english_name: string;
+    iso_639_1?: string;
+    name?: string;
+  }[];
+  omdbData: {
+    imdbRating: string;
+    Country: string;
+    Director: string;
+    Actors: string[];
+    Genre: string[];
+  };
+  page: number;
+  results: {
+    backdrop_path: string;
+    id: string;
+  }[];
+  total_pages: number;
+  imdb_id: number;
+  external_ids: {
+    imdb_id: number;
+  };
+}>;
+
+interface OmdbResponse<OData> {
+  data: OData;
+}
+type OmdbResponseData = OmdbResponse<{
+  imdbRating: string;
+  Country: string;
+  Director: string;
+  Actors: string[];
+  Genre: string[];
+}>;
+
+const MoviesList: React.FC<Props> = ({ endpoint, tvShow, h2 }) => {
   const bodyWindow = document.querySelector(".landing-body");
   const [showItems, setShowItems] = useState<details[]>([]);
-  // const [currentPage, setCurrentPage] = useState(1);
-  let [total_pages, setTotalPages] = useState(0);
+  let [total_pages, setTotalPages] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const backdropImages: string[] = [];
-  // const total_pages = 500;
-  const randomImages = useSelector(
-    (state: RootState) => state.images.randomImage
-  );
   const currentPage = useSelector(
     (state: RootState) => state.endpoints.currentPage
   );
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const res = await request(`${endpoint}`, {
+        // *Fetching 20 movies with lesser details
+        const res: ResponseData = await request(`${endpoint}`, {
           params: {
             page: currentPage,
           },
         });
         let { results, total_pages } = res.data;
-        // console.log(res.data);
         setTotalPages(total_pages > 500 ? (total_pages = 500) : total_pages);
-        results.forEach((result: any) => {
+        results.forEach((result) => {
           backdropImages.push(result.backdrop_path);
         });
-        // console.log(backdropImages);
-        const secondaryRequests = results.map(async (result: any) => {
-          const secondaryRes = await request(
+        const secondaryRequests = results.map(async (result) => {
+          const secondaryRes: ResponseData = await request(
             `${tvShow ? `tv/${result.id}` : `movie/${result.id}`}`,
             {
               params: {
@@ -96,18 +157,20 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
           const imdb_id = !tvShow
             ? secondaryRes.data.imdb_id
             : secondaryRes.data.external_ids.imdb_id;
-          const omdbRes = await axios.get(`https://www.omdbapi.com/`, {
-            params: {
-              apikey: process.env.REACT_APP_OMDB_API_KEY,
-              i: imdb_id,
-            },
-          });
+          const omdbRes: OmdbResponseData = await axios.get(
+            `https://www.omdbapi.com/`,
+            {
+              params: {
+                apikey: process.env.REACT_APP_OMDB_API_KEY,
+                i: imdb_id,
+              },
+            }
+          );
           return {
             ...secondaryRes.data,
             omdbData: omdbRes.data,
           };
         });
-        // console.log(details);
         const details = await Promise.all(secondaryRequests);
         // *Sort Items by IMDB Rating (Descending)
         const sortedDetails = details.slice().sort((a, b) => {
@@ -155,7 +218,6 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
       <div className="trending-content">
         <h2>{h2}</h2>
         {/* pagination buttons */}
-        {/* pagination buttons bottom */}
         {currentPage === 1 ? (
           <div className="page-btns">
             {/* Current page */}
@@ -264,7 +326,6 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, showButtons, h2 }) => {
             >
               <span className="material-symbols-outlined">arrow_back_ios</span>
             </button>
-
             {currentPage > 3 ? (
               // *Current page -3
               <button

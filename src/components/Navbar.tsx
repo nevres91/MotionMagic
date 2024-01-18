@@ -7,29 +7,30 @@ import {
   trendingMovies,
   popularShows,
 } from "../Api";
+import { AppDispatch } from "../store";
 
 const Navbar: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const handlePopular = () => {
+  const handlePopular: () => void = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(false));
     dispatch(changeEndpoint(popularMovies));
   };
-  const handleTopRated = () => {
+  const handleTopRated: () => void = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(false));
     dispatch(changeEndpoint(topRatedMovies));
   };
-  const handleTrending = () => {
+  const handleTrending: () => void = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(false));
     dispatch(changeEndpoint(trendingMovies));
   };
-  const handleShows = () => {
+  const handleShows: () => void = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(true));

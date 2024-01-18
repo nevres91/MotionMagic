@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { changeEndpoint, setPage } from "../slices/endpoints";
 import { RootState } from "../store";
 import SocialMedia from "./SocialMedia";
+import { AppDispatch } from "../store";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
 
   // *Search Button

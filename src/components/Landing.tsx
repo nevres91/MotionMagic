@@ -3,13 +3,13 @@ import MoviesList from "./MoviesList";
 import { useDispatch, useSelector } from "react-redux";
 import { changeEndpoint, setPage } from "../slices/endpoints";
 import SocialMedia from "./SocialMedia";
+import { AppDispatch } from "../store";
 
 const Landing: React.FC = () => {
-  // console.log("Landing rendered");
   const endpoint = useSelector(
     (state: RootState) => state.endpoints.currentEndpoint
   );
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // *TV-Show Boolean
   const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
 
@@ -34,7 +34,6 @@ const Landing: React.FC = () => {
             : `search/movie?query=${searchInput.value}&include_adult=false&page=1`
         )
       );
-
       searchInput.value = "";
     }
   };

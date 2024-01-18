@@ -8,7 +8,6 @@ type Genres = {
   name: string;
 };
 
-// * Global state Selected Movie or Show details
 type details = {
   title: string;
   overview: string;
@@ -27,10 +26,13 @@ type details = {
   number_of_episodes: number;
   number_of_seasons: number;
   videos: {
-    results: [];
+    results: {
+      name: string;
+      key: string;
+    }[];
   };
   Tvideos: {
-    results: [];
+    results: {}[];
   };
 };
 
@@ -44,6 +46,7 @@ const endpoints = createSlice({
     currentPage: 1 as number,
   },
   reducers: {
+    //*Change currentEndpoint (used in navbar buttons)
     changeEndpoint(state, action: { payload: string }) {
       state.currentEndpoint = action.payload;
     },
@@ -53,7 +56,7 @@ const endpoints = createSlice({
     setId(state, action: { payload: string }) {
       state.movieId = action.payload;
     },
-    moviesDetails(state, action) {
+    moviesDetails(state, action: { payload: details }) {
       state.movieDetails = action.payload;
     },
     setPage(state, action: { payload: number }) {

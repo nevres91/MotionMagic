@@ -5,6 +5,7 @@ import { RootState } from "../store";
 import { singleImage } from "../slices/movieImages";
 import { moviesDetails, setId } from "../slices/endpoints";
 import { useNavigate } from "react-router-dom";
+import { AppDispatch } from "../store";
 
 type details = {
   id: string;
@@ -27,7 +28,10 @@ type details = {
     results: {}[];
   };
   videos: {
-    results: {}[];
+    results: {
+      name: string;
+      key: string;
+    }[];
   };
   spoken_languages: {
     english_name: string;
@@ -46,8 +50,6 @@ type details = {
 const Card: React.FC<details> = ({
   poster_path,
   id,
-  original_language,
-  original_name,
   overview,
   release_date,
   first_air_date,
@@ -66,8 +68,9 @@ const Card: React.FC<details> = ({
   name,
 }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
+  // *Take only the first language from the spoken languages list.
   const language = spoken_languages[0];
   const { imdbRating } = omdbData;
   // *Resizing card image for lower resolutions (scrolling laggy on mobile devices)
@@ -87,19 +90,19 @@ const Card: React.FC<details> = ({
   }
 
   // *tooltip and overview on movie title
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [overlayVisible, setOverlayVisible] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
+  const [overlayVisible, setOverlayVisible] = useState<boolean>(false);
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter: () => void = () => {
     setTooltipVisible(true);
     setOverlayVisible(true);
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave: () => void = () => {
     setTooltipVisible(false);
     setOverlayVisible(false);
   };
-  const cardClick = () => {
+  const cardClick: () => void = () => {
     dispatch(singleImage(poster_path));
     dispatch(setId(id));
     window.scrollTo(0, 0);
