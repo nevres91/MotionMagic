@@ -6,6 +6,8 @@ export const imgBaseUrlMobile = "https://image.tmdb.org/t/p/w300";
 
 //  Movies
 export const popularMovies = "movie/popular";
+export const upcomingMovies = "movie/upcoming";
+export const discoverMovies = "discover/movie";
 export const similarMovies = "movie/";
 export const topRatedMovies = "movie/top_rated";
 export const trendingMovies = "trending/movie/day";

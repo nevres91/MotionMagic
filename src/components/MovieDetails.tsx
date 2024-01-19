@@ -137,14 +137,12 @@ const MovieDetails = () => {
                     </li>
                     <li>
                       <p>
-                        <span>Released:</span>{" "}
-                        {trimDate(
-                          first_air_date
-                            ? first_air_date
-                            : released
-                            ? released
-                            : "N/A"
-                        )}
+                        <span>Release Date:</span>{" "}
+                        {first_air_date
+                          ? first_air_date
+                          : released
+                          ? released
+                          : "N/A"}
                       </p>
                     </li>
                     <li>

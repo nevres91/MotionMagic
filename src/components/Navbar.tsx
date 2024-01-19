@@ -6,6 +6,8 @@ import {
   topRatedMovies,
   trendingMovies,
   popularShows,
+  upcomingMovies,
+  discoverMovies,
 } from "../Api";
 import { AppDispatch } from "../store";
 
@@ -16,7 +18,13 @@ const Navbar: React.FC = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(false));
-    dispatch(changeEndpoint(popularMovies));
+    dispatch(changeEndpoint(discoverMovies));
+  };
+  const handleUpcoming: () => void = () => {
+    navigate("/landing");
+    dispatch(setPage(1));
+    dispatch(tvShow(false));
+    dispatch(changeEndpoint(discoverMovies));
   };
   const handleTopRated: () => void = () => {
     navigate("/landing");
@@ -51,6 +59,9 @@ const Navbar: React.FC = () => {
           </li>
           <li onClick={handleTopRated} className="top-rated-movies">
             TopRated
+          </li>
+          <li onClick={handleUpcoming} className="upcoming-movies">
+            Upcoming
           </li>
         </ul>
       </div>

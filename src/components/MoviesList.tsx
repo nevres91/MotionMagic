@@ -131,6 +131,10 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, h2 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); //* Month index 1, 2, 3... didn't work, had to be 01, 02, 03...
+    const day = currentDate.getDate();
     const fetchItems = async () => {
       try {
         setLoading(true);
@@ -138,6 +142,9 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, h2 }) => {
         const res: ResponseData = await request(`${endpoint}`, {
           params: {
             page: currentPage,
+            ...(endpoint === "discover/movie"
+              ? { "primary_release_date.gte": `${year}-${month}-${day}` }
+              : {}),
           },
         });
         let { results, total_pages } = res.data;
