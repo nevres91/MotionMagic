@@ -173,7 +173,7 @@ const Card: React.FC<details> = ({
         </div>
         <div className="rating">
           <div></div>
-          <span>{imdbRating}</span>
+          <span>{!imdbRating ? "N/A" : imdbRating}</span>
         </div>
         <span className="quality">HD</span>
       </div>
