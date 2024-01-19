@@ -12,37 +12,53 @@ import {
 import { AppDispatch } from "../store";
 
 const Navbar: React.FC = () => {
+  const bodyWindow = document.querySelector(".landing-body");
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const handlePopular: () => void = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(false));
-    dispatch(changeEndpoint(discoverMovies));
+    dispatch(changeEndpoint(popularMovies));
+    if (bodyWindow) {
+      bodyWindow.scrollTo(0, 0);
+    }
   };
   const handleUpcoming: () => void = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(false));
     dispatch(changeEndpoint(discoverMovies));
+    if (bodyWindow) {
+      bodyWindow.scrollTo(0, 0);
+    }
   };
   const handleTopRated: () => void = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(false));
     dispatch(changeEndpoint(topRatedMovies));
+    if (bodyWindow) {
+      bodyWindow.scrollTo(0, 0);
+    }
   };
   const handleTrending: () => void = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(false));
     dispatch(changeEndpoint(trendingMovies));
+    if (bodyWindow) {
+      bodyWindow.scrollTo(0, 0);
+    }
   };
   const handleShows: () => void = () => {
     navigate("/landing");
     dispatch(setPage(1));
     dispatch(tvShow(true));
     dispatch(changeEndpoint(popularShows));
+    if (bodyWindow) {
+      bodyWindow.scrollTo(0, 0);
+    }
   };
 
   return (

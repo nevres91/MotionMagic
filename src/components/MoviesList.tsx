@@ -150,7 +150,9 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, h2 }) => {
         let { results, total_pages } = res.data;
         setTotalPages(total_pages > 500 ? (total_pages = 500) : total_pages);
         results.forEach((result) => {
-          backdropImages.push(result.backdrop_path);
+          if (result.backdrop_path !== null) {
+            backdropImages.push(result.backdrop_path);
+          }
         });
         const secondaryRequests = results.map(async (result) => {
           const secondaryRes: ResponseData = await request(

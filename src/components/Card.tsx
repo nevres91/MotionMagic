@@ -105,7 +105,7 @@ const Card: React.FC<details> = ({
   const cardClick: () => void = () => {
     dispatch(singleImage(poster_path));
     dispatch(setId(id));
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
     localStorage.setItem("MovieID", id);
     navigate("/details");
     dispatch(

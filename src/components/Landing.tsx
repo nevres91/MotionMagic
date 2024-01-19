@@ -82,6 +82,8 @@ const Landing: React.FC = () => {
               ? "Popular TV-Shows:"
               : endpoint === "trending/movie/day"
               ? "Trending Movies:"
+              : endpoint === "discover/movie"
+              ? "Upcoming Movies:"
               : "Search Results:"
           }
           showButtons={false}

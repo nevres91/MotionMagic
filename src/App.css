@@ -802,6 +802,9 @@
 }
 /* !Simplify card for smoother scrolling on mobile devices */
 @media (max-width: 550px) {
+  .navbar:hover .nav-items {
+    scale: 0.81;
+  }
   .card {
     width: 46.5%;
   }
@@ -889,6 +892,11 @@
 @media (max-width: 350px) {
   .card {
     width: 95%;
+  }
+}
+@media (max-width: 430px) {
+  .navbar:hover .nav-items {
+    scale: 0.72;
   }
 }
 
