@@ -1,13 +1,10 @@
 import { request } from "../Api";
 import React from "react";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
 import axios from "axios";
-import { setId } from "../slices/endpoints";
 import Card from "./Card";
 import SocialMedia from "./SocialMedia";
-import { AppDispatch } from "../store";
+import { useParams } from "react-router-dom";
 
 type details = {
   id: string;
@@ -113,59 +110,51 @@ type OmdbResponseData = OmdbResponse<{
 }>;
 
 const Similar: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
   const [showItems, setShowItems] = useState<details[]>([]);
-  const movieId = useSelector((state: RootState) => state.endpoints.movieId);
+  const params = useParams();
 
   useEffect(() => {
-    const movieId: string = localStorage.getItem("MovieID")!;
-    dispatch(setId(movieId));
     const fetchItems = async () => {
+      const { type, id } = params;
       try {
-        if (movieId) {
-          const response: ResponseData = await request(
-            tvShow ? `tv/${movieId}/similar` : `movie/${movieId}/similar`
+        const response: ResponseData = await request(
+          type === "show" ? `tv/${id}/similar` : `movie/${id}/similar`
+        );
+        const { results } = response.data;
+        const idRequest = results.map(async (result: any) => {
+          const res: ResponseData = await request(
+            `${type === "show" ? `tv/${result.id}` : `movie/${result.id}`}`,
+            {
+              params: {
+                append_to_response: "external_ids,videos",
+              },
+            }
           );
-          const { results } = response.data;
-          const idRequest = results.map(async (result: any) => {
-            const res: ResponseData = await request(
-              `${tvShow ? `tv/${result.id}` : `movie/${result.id}`}`,
-              {
-                params: {
-                  append_to_response: "external_ids,videos",
-                },
-              }
-            );
-
-            const imdb_id = !tvShow
-              ? res.data.imdb_id
-              : res.data.external_ids.imdb_id;
-
-            const omdbRes: OmdbResponseData = await axios.get(
-              `https://www.omdbapi.com/`,
-              {
-                params: {
-                  apikey: process.env.REACT_APP_OMDB_API_KEY,
-                  i: imdb_id,
-                },
-              }
-            );
-            return {
-              ...res.data,
-              omdbData: omdbRes.data,
-              trailerVideos: res.data.videos,
-            };
-          });
-          const details = await Promise.all(idRequest);
-          setShowItems(details);
-        }
+          const imdb_id =
+            type === "movie" ? res.data.imdb_id : res.data.external_ids.imdb_id;
+          const omdbRes: OmdbResponseData = await axios.get(
+            `https://www.omdbapi.com/`,
+            {
+              params: {
+                apikey: process.env.REACT_APP_OMDB_API_KEY,
+                i: imdb_id,
+              },
+            }
+          );
+          return {
+            ...res.data,
+            omdbData: omdbRes.data,
+            trailerVideos: res.data.videos,
+          };
+        });
+        const details = await Promise.all(idRequest);
+        setShowItems(details);
       } catch (error) {
         console.log("something went similar:", error);
       }
     };
     fetchItems();
-  }, [movieId]);
+  }, [params.id]);
   return (
     <div className="similar-container">
       <h1>You may also like:</h1>

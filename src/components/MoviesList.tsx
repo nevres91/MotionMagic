@@ -134,7 +134,7 @@ const MoviesList: React.FC<Props> = ({ endpoint, tvShow, h2 }) => {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, "0"); //* Month index 1, 2, 3... didn't work, had to be 01, 02, 03...
-    const day = currentDate.getDate();
+    const day = String(currentDate.getDate() + 1).padStart(2, "0");
     const fetchItems = async () => {
       try {
         setLoading(true);

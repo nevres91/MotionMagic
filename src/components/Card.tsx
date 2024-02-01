@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { imgBaseUrl, imgBaseUrlMobile } from "../Api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import { singleImage } from "../slices/movieImages";
-import { moviesDetails, setId } from "../slices/endpoints";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../store";
 
@@ -59,16 +57,9 @@ const Card: React.FC<details> = ({
   number_of_seasons,
   spoken_languages,
   omdbData,
-  production_companies,
-  backdrop_path,
-  genres,
   show_name,
-  trailerVideos,
-  videos,
-  name,
 }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
   const tvShow = useSelector((state: RootState) => state.endpoints.tvShow);
   // *Take only the first language from the spoken languages list.
   const language = spoken_languages[0];
@@ -103,56 +94,8 @@ const Card: React.FC<details> = ({
     setOverlayVisible(false);
   };
   const cardClick: () => void = () => {
-    dispatch(singleImage(poster_path));
-    dispatch(setId(id));
-    // window.scrollTo(0, 0);
-    localStorage.setItem("MovieID", id);
-    navigate("/details");
-    dispatch(
-      moviesDetails({
-        title: title,
-        overview: overview,
-        imdb: omdbData.imdbRating,
-        duration: runtime,
-        released: release_date,
-        first_air_date: first_air_date,
-        production: production_companies,
-        country: omdbData.Country,
-        director: omdbData.Director,
-        casts: omdbData.Actors,
-        backdrop_path: backdrop_path,
-        poster_path: poster_path,
-        genres: genres,
-        show_name: name,
-        number_of_episodes: number_of_episodes,
-        number_of_seasons: number_of_seasons,
-        Tvideos: trailerVideos,
-        videos: videos,
-      }),
-      localStorage.setItem(
-        "DETAILS",
-        JSON.stringify({
-          title: title,
-          overview: overview,
-          imdb: omdbData.imdbRating,
-          duration: runtime,
-          released: release_date,
-          first_air_date: first_air_date,
-          production: production_companies,
-          country: omdbData.Country,
-          director: omdbData.Director,
-          casts: omdbData.Actors,
-          backdrop_path: backdrop_path,
-          poster_path: poster_path,
-          genres: genres,
-          show_name: name,
-          number_of_episodes: number_of_episodes,
-          number_of_seasons: number_of_seasons,
-          Tvideos: trailerVideos,
-          videos: videos,
-        })
-      )
-    );
+    window.scrollTo(0, 0);
+    navigate(`/details/${tvShow ? "show" : "movie"}/${id}`);
   };
 
   return (

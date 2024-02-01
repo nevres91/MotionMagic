@@ -1166,3 +1166,6 @@
     margin-top: 50%;
   }
 }
+.loading {
+  height: 100vh;
+}

@@ -6,7 +6,6 @@ import {
   topRatedMovies,
   trendingMovies,
   popularShows,
-  upcomingMovies,
   discoverMovies,
 } from "../Api";
 import { AppDispatch } from "../store";

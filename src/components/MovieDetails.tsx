@@ -1,69 +1,108 @@
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { request } from "../Api";
+import axios from "axios";
 import Similar from "./Similar";
-import { useEffect } from "react";
-import { moviesDetails } from "../slices/endpoints";
-import { AppDispatch } from "../store";
-
-// interface Videos<Results>{
-//   results: Results
-// }
-
-// type VideosResults = Videos<{
-//     name: string;
-//     key: string;
-// }>
-type VideosResults = {
-  results: {
+type details = {
+  secondaryRes: {
     name: string;
-    key: string;
-  }[];
+    poster_path: string;
+    title: string;
+    overview: string;
+    release_date: string;
+    first_air_date: string;
+    runtime: number;
+    number_of_episodes: number;
+    number_of_seasons: number;
+    production_companies: [];
+    genres: [];
+    backdrop_path: string;
+    videos: {
+      results: {
+        name: string;
+        key: string;
+      }[];
+    };
+  };
+  omdbRes: {
+    imdbRating: string;
+    Country: string;
+    Director: string;
+    Actors: string[];
+  };
 };
 
-const MovieDetails = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const movieDetails = useSelector(
-    (state: RootState) => state.endpoints.movieDetails
-  );
-  // *Check if movieDetails object is empty.
-  const isMovieDetailsEmpty = Object.keys(movieDetails).length === 0;
-  useEffect(() => {
-    const storedDetails = localStorage.getItem("DETAILS");
-    if (storedDetails) {
-      const parsedDetails = JSON.parse(storedDetails);
-      dispatch(moviesDetails(parsedDetails));
-    }
-  }, [dispatch]);
+const MovieDetails: React.FC = () => {
+  const [movieDetails, setMovieDetails] = useState<details | null>(null);
+  const params = useParams();
 
+  useEffect(() => {
+    const fetchMovie = async () => {
+      try {
+        const secondaryRes = await request(
+          `${
+            params.type === "show" ? `tv/${params.id}` : `movie/${params.id}`
+          }`,
+          {
+            params: {
+              append_to_response: "external_ids,videos",
+            },
+          }
+        );
+        const imdb_id =
+          params.type === "movie"
+            ? secondaryRes.data.imdb_id
+            : secondaryRes.data.external_ids.imdb_id;
+        const omdbRes = await axios.get(`https://www.omdbapi.com/`, {
+          params: {
+            apikey: process.env.REACT_APP_OMDB_API_KEY,
+            i: imdb_id,
+          },
+        });
+        const details = {
+          secondaryRes: secondaryRes.data,
+          omdbRes: omdbRes.data,
+        };
+        setMovieDetails(details as any);
+      } catch (error) {
+        console.error("Error fetching movie details:", error);
+      }
+    };
+
+    fetchMovie();
+  }, [params.id, params.type]);
+
+  if (!movieDetails) {
+    return (
+      <div className="details-body loading">
+        <div className="loader">
+          <div className="loader__circle"></div>
+          <div className="loader__circle"></div>
+          <div className="loader__circle"></div>
+          <div className="loader__circle"></div>
+          <div className="loader__circle"></div>
+        </div>
+      </div>
+    );
+  }
+  const { secondaryRes, omdbRes } = movieDetails;
   const {
-    title,
-    overview,
-    imdb,
-    duration,
-    first_air_date,
-    released,
-    production,
-    country,
-    director,
-    casts,
     backdrop_path,
     poster_path,
+    first_air_date,
+    overview,
+    title,
     genres,
-    show_name,
-    number_of_episodes,
     number_of_seasons,
+    number_of_episodes,
+    runtime,
+    production_companies,
     videos,
-  } = movieDetails;
+    name,
+    release_date,
+  } = secondaryRes;
 
-  // *Extracting year from release date
-  function trimDate(date: string) {
-    if (date) {
-      const trimmed = date.substring(0, 4);
-      return trimmed;
-    } else {
-      return "Loading...";
-    }
-  }
+  const { imdbRating, Country, Director, Actors } = omdbRes;
 
   // *Play trailer
   const playTrailer = () => {
@@ -83,7 +122,7 @@ const MovieDetails = () => {
 
   return (
     <div className="details-body">
-      {!isMovieDetailsEmpty ? (
+      {omdbRes ? (
         <div className="details-container">
           <div
             className="details-movie-image"
@@ -116,7 +155,7 @@ const MovieDetails = () => {
               </div>
               <div className="overview-content">
                 <div className="movie-overview">
-                  <h1>{first_air_date ? show_name : title}</h1>
+                  <h1>{first_air_date ? name : title}</h1>
                   <p>{overview}</p>
                 </div>
                 <div className="button-div">
@@ -132,7 +171,7 @@ const MovieDetails = () => {
                   <ul>
                     <li>
                       <p>
-                        <span className="imdb">IMDB:</span> {imdb}
+                        <span className="imdb">IMDB:</span> {imdbRating}
                       </p>
                     </li>
                     <li>
@@ -140,8 +179,8 @@ const MovieDetails = () => {
                         <span>Release Date:</span>{" "}
                         {first_air_date
                           ? first_air_date
-                          : released
-                          ? released
+                          : release_date
+                          ? release_date
                           : "N/A"}
                       </p>
                     </li>
@@ -149,13 +188,13 @@ const MovieDetails = () => {
                       <p>
                         <span>Genre:</span>{" "}
                         {genres
-                          ? genres.map((genre) => `${genre.name}, `)
+                          ? genres.map((genre: any) => `${genre.name}, `)
                           : "N/A"}
                       </p>
                     </li>
                     <li>
                       <p>
-                        <span>Country:</span> {country}
+                        <span>Country:</span> {Country}
                       </p>
                     </li>
                     <li>
@@ -163,25 +202,27 @@ const MovieDetails = () => {
                         <span>Duration:</span>{" "}
                         {first_air_date
                           ? "S" + number_of_seasons + " E" + number_of_episodes
-                          : duration
-                          ? JSON.stringify(duration) + " min"
+                          : runtime
+                          ? JSON.stringify(runtime) + " min"
                           : "N/A"}{" "}
                       </p>
                     </li>
                     <li>
                       <p>
-                        <span>Directed by:</span> {director}
+                        <span>Directed by:</span> {Director}
                       </p>
                     </li>
                     <li>
                       <p>
                         <span>Production:</span>{" "}
-                        {production.map((prod) => `${prod.name}, `)}
+                        {production_companies.map(
+                          (prod: any) => `${prod.name}, `
+                        )}
                       </p>
                     </li>
                     <li>
                       <p>
-                        <span>Casts:</span> {casts}
+                        <span>Casts:</span> {Actors}
                       </p>
                     </li>
                   </ul>
