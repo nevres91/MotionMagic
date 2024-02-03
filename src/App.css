@@ -902,6 +902,7 @@
 
 /* !Movie Details Page */
 .details-body {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1169,3 +1170,58 @@
 .loading {
   height: 100vh;
 }
+
+/* ! ------checkbox for material ui -------*/
+.mui {
+  position: absolute;
+  top: 50px;
+  right: 0px;
+  z-index: 99999;
+  scale: 0.8;
+  caret-color: transparent;
+}
+#checkbox {
+  display: none;
+}
+
+.switch {
+  position: relative;
+  width: fit-content;
+  padding: 10px 20px;
+  background-color: rgba(148, 14, 112, 0.8);
+  border-radius: 50px;
+  z-index: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: white;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.switch svg path {
+  fill: white;
+}
+#checkbox:checked + .switch {
+  background-color: rgba(224, 22, 170, 1);
+  box-shadow: 0px 0px 40px rgba(574, 0, 255, 0.538);
+}
+
+.MuiGrid-root span {
+  background: rgba(128, 128, 128, 0.353);
+  border-radius: 7px;
+  padding: 1px 7px;
+  max-height: 22px;
+}
+.MuiGrid-root {
+  color: rgb(219, 217, 217);
+  font-family: "Lato";
+}
+.MuiBox-root::-webkit-scrollbar {
+  color: transparent;
+  width: 0;
+}
+
+/* !-------------------------------------- */
